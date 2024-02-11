@@ -18,18 +18,21 @@ body, html {
 }
 
 .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     background-color: transparent; 
     padding: 20px; 
+    margin-left: 30px;
+    margin-top: 20px;
 }
 
 .ifood-logo {
     width: 67px; 
     height: auto; 
 }
+
 
 .container {
     position: relative;
@@ -38,7 +41,7 @@ body, html {
     align-items: center;
     height: 100%;
     z-index: 1;
-    margin-left: 470px;
+    margin-left: -60px;
 }
 
 .registration-form {
@@ -61,6 +64,7 @@ body, html {
 .registration-form h4 {
     margin-bottom: 25px;
     color: gray;
+    text-decoration: none;
 }
 
 .registration-form button.face,
@@ -106,6 +110,11 @@ body, html {
     border: 1px solid #9b9898; 
     border-radius: none; 
     cursor: pointer;
+    text-decoration: none;
+}
+
+h4 {
+    text-decoration: none;
 }
 
 
@@ -122,8 +131,6 @@ body, html {
     cursor: pointer;
     background-color: #ffffff;
 }
-
-
 
 .button-container button{
     border: 1px solid #9b9898; 

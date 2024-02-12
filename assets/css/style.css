@@ -44,6 +44,11 @@ body, html {
     margin-left: -60px;
 }
 
+.svg-side{
+    min-width: 24%;
+    padding-right: 10%;
+}
+
 .registration-form {
     width: 330px;
     padding: 40px;

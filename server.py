@@ -9,11 +9,11 @@ auth_token = 'f7716047afe084b327743331e448e43e'
 client = Client(account_sid, auth_token)
 
 conn = pg.connect(
-    host="localhost",
+    dbname="ifood-bd",
     user="postgres",
-    password="Ml304210?",
-    port="5432",
-    dbname="Ifood.bd"
+    password="postgres",
+    host="postgres-container",
+    port="5432"   
 )
 
 app = Flask(__name__)
@@ -111,5 +111,5 @@ def pagina_bebidas():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5001, debug=True)
 

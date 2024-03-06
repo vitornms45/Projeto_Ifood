@@ -1,15 +1,17 @@
-from app import app
+'''from app import app'''
 from flask import Flask,render_template,request, jsonify, redirect, url_for, session
 import psycopg2 as pg
 import numpy as np
 from twilio.rest import Client
 import random, secrets
 
-account_sid = ''
-auth_token = ''
+app = Flask(__name__)
+
+account_sid = 'ACbfd57f67730c9f2493b91976826e59ad'
+auth_token = 'f7716047afe084b327743331e448e43e'
 client = Client(account_sid, auth_token)
 
-conn = pg.connect(database = "ifood", host = "localhost", user = "postgres", password = "admin")
+conn = pg.connect(dbname = "ifood-bd", host = "postgres-container", user = "postgres", password = "postgres", port='5432')
 
 app.secret_key = secrets.token_bytes(16)
 
@@ -89,4 +91,8 @@ def codigo_verificacao():
 @app.route("/bebidas")
 def pagina_bebidas():
     return render_template("Página_bebidas.html")
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
 

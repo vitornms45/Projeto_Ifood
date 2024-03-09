@@ -4,6 +4,8 @@ import psycopg2 as pg
 import numpy as np
 from twilio.rest import Client
 import random, secrets
+import smtplib
+import email.message
 
 account_sid = ''
 auth_token = ''
@@ -13,13 +15,19 @@ conn = pg.connect(database = "ifood", host = "localhost", user = "postgres", pas
 
 app.secret_key = secrets.token_bytes(16)
 
+Email = False
+Celular = False
+
 @app.route("/", endpoint='home')
 def pagina_inicial():
 
-    return render_template("teste_pagina2.html")
+    return render_template("home.html")
 
 @app.route("/cadastro")
 def cadastro():
+
+
+
     return render_template("cadastro.html")
 
 @app.route("/cadastro_celular",methods=['POST','GET'])
@@ -32,20 +40,19 @@ def cadastro_celular():
         print(request.form['phoneNumber'])
         session['telefone'] = request.form['phoneNumber']
 
-        codigo1 = random.randrange(100000, 999999, 6)
+        session['codAcessCelular'] = random.randrange(100000, 999999, 6)
 
         message = client.messages.create(
             from_='whatsapp:+14155238886',
-            body=f'Seu código de verificação é {codigo1}. Para sua segurança, não o compartilhe.',
+            body=f'Seu código de verificação é {session["codAcessCelular"]}. Para sua segurança, não o compartilhe.',
             to=f'whatsapp:+55{session["telefone"]}'
             )
 
         print(message.sid)
         print(session['telefone'])
 
-        session['codAcess'] = codigo1
-
-
+        global Celular
+        Celular = True
         return render_template("/código_de_acesso.html")
 
 
@@ -53,13 +60,29 @@ def cadastro_celular():
 
 @app.route("/cadastro_email", methods=['POST', 'GET'])
 def cadastro_email():
-    if request.method == 'POST':
-        if request.is_json:
-            data = request.get_json()
-            email = data.get('email')
-        else:
-            email = request.form.get('email')
 
+    if request.method == 'POST':
+        session['emailCli']  = request.form['email']
+        session['codAcessEmail']= random.randrange(100000, 999999, 6)
+
+
+        msg = email.message.Message()
+        msg['Subject'] = "Código de acesso"
+        msg['From'] = 'ifooddossistematicos@gmail.com'
+        msg['To'] = session['emailCli']
+        password = 'rahq bsnc auyn jvzc' 
+        msg.add_header('Content-Type', 'text/html')
+        msg.set_payload(str(session['codAcessEmail']))
+
+        s = smtplib.SMTP('smtp.gmail.com: 587')
+        s.starttls()
+        # Login Credentials for sending the mail
+        s.login(msg['From'], password)
+        s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+        print('Email enviado')
+        global Email
+        Email = True
+        return render_template("código_de_acesso.html")
 
     return render_template("cadastro_e-mail.html")
 
@@ -67,16 +90,32 @@ def cadastro_email():
 
 @app.route("/código_de_acesso", methods=['POST','GET'])
 def codigo_verificacao():
-
-    if request.method == 'POST':
-        codigo_str = request.form.get('accessCode')
-        
-        if int(codigo_str) == session['codAcess']:
-            return render_template('teste_pagina2.html')
-        
+    
+    if Email == False:
+        if request.method == 'POST':
+            accessCodeCelular = request.form.get('accessCode')
+            
+        if int(accessCodeCelular) == session['codAcessCelular']:
+            return render_template('cadastro_e-mail.html')
+            
         else:
             return render_template("código_de_acesso.html", codErrado = True)
-        
+
+    elif Celular == False:
+        if request.method == 'POST':
+            accessCodeEmail = request.form.get('accessCode')
+            
+            if int(accessCodeEmail) == session['codAcessEmail']:
+                return render_template('cadastro_celular.html')
+            
+            else:
+                return render_template("código_de_acesso.html", codErrado = True)
+            
+    
+    else:
+        return "deu certo"
+
+            
     return render_template("código_de_acesso.html")
 
 
@@ -84,4 +123,5 @@ def codigo_verificacao():
 @app.route("/bebidas")
 def pagina_bebidas():
     return render_template("Página_bebidas.html")
+
 

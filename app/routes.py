@@ -21,6 +21,8 @@ Celular = False
 @app.route("/", endpoint='home')
 def pagina_inicial():
 
+    for iten in session:
+        session.pop(iten)
     return render_template("home.html")
 
 @app.route("/cadastro")
@@ -32,9 +34,6 @@ def cadastro():
 
 @app.route("/cadastro_celular",methods=['POST','GET'])
 def cadastro_celular():
-
-    if 'telefone' in session:
-        session.pop('telefone', None)
 
     if request.method == 'POST':
         print(request.form['phoneNumber'])
@@ -87,7 +86,6 @@ def cadastro_email():
     return render_template("cadastro_e-mail.html")
 
 
-
 @app.route("/código_de_acesso", methods=['POST','GET'])
 def codigo_verificacao():
     
@@ -113,12 +111,37 @@ def codigo_verificacao():
             
     
     else:
-        return "deu certo"
+        return render_template("registro_Nome_Cpf.html")
 
             
     return render_template("código_de_acesso.html")
 
+@app.route("/registroFinal", methods=['POST','GET'])
+def teste():
+    if request.method == 'POST':
+        session['nome']  = request.form['nome']
+        session['cpf'] = request.form['cpf']
 
+
+        cur = conn.cursor()
+
+        table = '"Usuario"'
+        emailCli = session['emailCli'] 
+        nomeCli = session['nome']
+        cpfCli = session ['cpf']
+        celCli = session['telefone']
+
+        SqlStr =f"INSERT INTO {table} (email, nome, cpf, telefone, endereco) VALUES ('{emailCli}', '{nomeCli}',{cpfCli},{celCli},'testeemail');"
+        print(SqlStr)
+        cur.execute(f"{SqlStr}")
+        conn.commit()
+
+        cur.close()
+
+
+        return render_template("home.html")
+
+    return render_template('registro_Nome_Cpf.html')
 
 @app.route("/bebidas")
 def pagina_bebidas():

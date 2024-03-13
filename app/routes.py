@@ -131,7 +131,7 @@ def teste():
         cpfCli = session ['cpf']
         celCli = session['telefone']
 
-        SqlStr =f"INSERT INTO {table} (email, nome, cpf, telefone, endereco) VALUES ('{emailCli}', '{nomeCli}',{cpfCli},{celCli},'testeemail');"
+        SqlStr =f"INSERT INTO {table} (email, nome, cpf, telefone, endereco) VALUES ('{emailCli}', '{nomeCli}',{cpfCli},{celCli},'testeendereco');"
         print(SqlStr)
         cur.execute(f"{SqlStr}")
         conn.commit()
